@@ -4,7 +4,7 @@
 
 Grid Fishing is an implementation of the "Carpet Fishing" game described in the Sept 30, 2007 Dilbert cartoon. [https://dilbert.com/strip/2007-09-30](https://dilbert.com/strip/2007-09-30).
 
-For a live imlementation visit: [https://grid.fishing/](https://grid.fishing/).
+For a live implementation visit: [https://grid.fishing/](https://grid.fishing/).
 
 ## Installation
 
