@@ -419,6 +419,9 @@
       });
     }
 
+    width.addEventListener('focus', () => { width.select(); });
+    height.addEventListener('focus', () => { height.select(); });
+
     cast.addEventListener('click', (e) => {
       e.preventDefault();
 
