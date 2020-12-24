@@ -12,7 +12,7 @@ None.  Download the `index.html` and open in your browser of choice.  No framewo
 
 ## Thanks
 
-[flloodd](https://github.com/ffoodd) for their "Improvied .sr-only" gist [https://gist.github.com/ffoodd/000b59f431e3e64e4ce1a24d5bb36034](https://gist.github.com/ffoodd/000b59f431e3e64e4ce1a24d5bb36034).
+[flloodd](https://github.com/ffoodd) for their "Improved .sr-only" gist [https://gist.github.com/ffoodd/000b59f431e3e64e4ce1a24d5bb36034](https://gist.github.com/ffoodd/000b59f431e3e64e4ce1a24d5bb36034).
 
 
 [Louis Lazaris](https://codepen.io/impressivewebs) for their "Keyboard-friendly and Accessible Hamburger Menu Toggle" [https://codepen.io/impressivewebs/pen/qBbmMRJ](https://codepen.io/impressivewebs/pen/qBbmMRJ).
