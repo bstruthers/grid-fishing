@@ -1,4 +1,4 @@
-# Carpet Fishing
+# Grid Fishing
 
 ## About
 
