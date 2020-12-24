@@ -438,6 +438,8 @@
       width.value = gridWidth;
       height.value = gridHeight;
 
+      const notifyDisabled = notify.disabled;
+
       width.disabled = true;
       notify.disabled = true;
       height.disabled = true;
@@ -461,7 +463,7 @@
 
         document.title = document.title.replace('Line Cast - ', '');
         width.disabled = false;
-        notify.disabled = false;
+        notify.disabled = notifyDisabled;
         height.disabled = false;
         cast.disabled = false;
 
