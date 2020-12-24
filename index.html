@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Grid Fishin'</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎣</text></svg>">
+
+  <style>
+    /* https://gist.github.com/ffoodd/000b59f431e3e64e4ce1a24d5bb36034 */
+    .sr-only {
+      border: 0 !important;
+      clip: rect(1px, 1px, 1px, 1px) !important;
+      -webkit-clip-path: inset(50%) !important;
+      clip-path: inset(50%) !important;
+      height: 1px !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      padding: 0 !important;
+      position: absolute !important;
+      width: 1px !important;
+      white-space: nowrap !important;
+    }
+
+    .hidden {
+      visibility: hidden;
+    }
+
+    .none {
+      display: none;
+    }
+  </style>
+
+  <style>
+    /* Basic styles and structure */
+    *, ::before, ::after { box-sizing: border-box; }
+    :focus { outline: 2px solid #5babda; }
+    html, body { font-family: sans-serif; height: 100%; }
+    html, body, h1, h2, ul, ol, button { margin: 0; padding: 0; }
+    abbr { text-decoration: none; }
+    body {
+      color: #222;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      grid-template-columns: auto 1fr;
+      grid-template-areas:
+       "nav header"
+       ". main"
+       ". footer";
+    }
+    nav { grid-area: nav; grid-row-end: span 3; }
+    header { grid-area: header; padding: 1rem; }
+    main { grid-area: main; padding: 0 1rem; }
+    footer { grid-area: footer; }
+    p, ol > li { font-family: serif; }
+    button {
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+
+    #open-menu {
+      font-size: 2em;
+      margin-right: 1rem;
+    }
+
+    header > h1 > a {
+      color: inherit;
+      text-decoration: wavy underline #b2dbeb;
+    }
+
+    /* Navigation Elements */    
+    body.menu-opened::before {
+      content: '';
+      display: block;
+      height: 100vh;
+      width: 100vw;
+      position: absolute;
+      z-index: 1000;
+      background: #000;
+      opacity: 0.25;
+    }
+
+    #navigation {
+      background-color: #e6f2f7;
+      height: 100%;
+      padding-left: 1rem;
+      position: absolute;
+      width: 15rem;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      transition: width 0.1s ease-in-out;
+    }
+
+    #close-menu {
+      font-size: 2rem;
+      padding: 0;
+      align-self: flex-end;
+      width: 3rem;
+    }
+
+    #nav-list {
+      list-style: none;
+    }
+
+    #nav-list > li {
+      margin-bottom: 0.5rem;
+    }
+
+    #nav-list a {
+      color: #111;
+      font-size: 1.6rem;
+      text-decoration: none;
+    }
+
+    #nav-list a:hover {
+      text-decoration: underline;
+    }
+    
+    #navigation.collapsed {
+      padding: 0;
+      width: 0;
+      position: absolute;
+    }
+
+    /* Content */
+    form {
+      display: flex;
+      flex-direction: column;
+      margin-top: 0.5rem;
+    }
+
+    .inputs {
+      background-color: #efefef;
+      padding: 1rem;
+      display: grid;
+      grid-template-areas:
+        "width"
+        "height"
+        "notify"
+      ;
+      gap: 1rem;
+    }
+
+    .inputs input {
+      border: solid 1px #ccc;
+      background: #fff;
+      padding: 0.2rem 0 0.2rem 0.5rem;
+    }
+
+    .inputs label {
+      display: inline-block;
+      min-width: 4rem;
+    }
+
+    #cast {
+      background-color: #b2dbeb;
+      color: #111;
+      font-size: 1.25rem;
+      margin-top: 1.5rem;
+      padding: 0.5rem 1rem
+    }
+    #cast:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    #alert {
+      background-color: #289D84;
+      color: #fff;
+      padding: 1rem;
+      font-size: 2rem;
+    }
+
+    #about > h2 {
+      margin-bottom: 1rem;
+    }
+    #about > ol {
+      margin-left: 1.17rem;
+    }
+    #about >ol >li {
+      margin-bottom: 1rem;
+    }
+
+    /* Footer */
+    footer {
+      padding: 1rem;
+      font-size: -.84rem;
+    }
+
+    .fish {
+      display: block;
+      position: absolute;
+      bottom: 0.5rem;
+      right: 0.5rem;
+    }
+
+    @media (min-width: 1025px) {
+      main > section, footer > div {
+        width: 60rem;
+      }
+
+      .fish {
+        display: block;
+        position: absolute;
+      }
+
+      .fish-one {
+        bottom: 5rem;
+        right: 1rem;
+        font-size: 3rem;
+        opacity: .8;
+      }
+
+      .fish-two {
+        bottom: 3rem;
+        right: 6rem;
+        font-size: 5rem;
+        transform: scale(-1, 1);
+      }
+
+      .fish-three {
+        bottom: 1rem;
+        right: 1rem;
+        font-size: 1.5rem;
+        opacity: .8;
+      }
+    }
+
+    @media (min-width: 1280px) {
+      #navigation {
+        position: relative;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <button id="open-menu" type="button" aria-label="Show Navigation Menu" aria-expanded="false" tabindex="0">☰</button>
+
+    <h1><a href="/">Grid <abbr title="Fishing">Fishin'</abbr> 🎣</a></h1>
+  </header>
+
+  <nav aria-labelledby="open-menu">
+    <div id="navigation" class="hidden collapsed">
+      <button id="close-menu" aria-label="Hide Navigation Menu">×</button>
+
+      <ul id="nav-list">
+        <li><a href="#play">Play</a></li>
+        <li><a href="#about">About</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <section id="play" class="">
+      <h1 class="sr-only">Play</h1>
+
+      <noscript>
+        Grid <abbr title="Fishing">Fishin'</abbr> requires the use of JavaScript in order to cast a line.
+      </noscript>
+
+      <form>
+        <div class="inputs">
+          <div>
+            <label for="width">Width:</label>
+            <input id="width" name="width" type="number" step="1" value="4" placeholder="#">
+          </div>
+
+          <div>
+            <label for="height">Height:</label>
+            <input id="height" name="height" type="number" step="1" value="4" placeholder="#">
+          </div>
+
+          <div>
+            <input id="notify" name="notify" type="checkbox">
+            <label for="notify">Enable Notifications</label>
+          </div>
+        </div>
+
+        <button type="submit" id="cast">Cast</button>
+      </form>
+    </section>
+    <section id="about" class="none">
+      <h1>About</h1>
+
+      <p>
+        Grid <abbr title="Fishing">Fishin'</abbr> is inspired by Dilbert's "Carpet Fishing" game described in the Sept 30, 2007 cartoon: <a href="https://dilbert.com/strip/2007-09-30">https://dilbert.com/strip/2007-09-30</a>.
+      </p>
+
+      <h2>How to play</h2>
+
+      <ol>
+        <li>
+          Divide an area into a grid.  Maybe it's the floor.  Maybe it's a whiteboard or a piece of paper.  Pick the area where you're going to cast your line.
+        </li>
+        <li>
+          Enter the grid size (width x height) and cast your line.  The bigger the dimensions, the harder the prize.
+        </li>
+        <li>
+          Wait and relax for the fish to bite in one of the areas.  Fishing takes anywhere from seconds to a full hour. If the area you casted your line is where the fish are, you got one!  Reel it in! If the area you casted your line is not where the fish are biting, move spots and cast again.
+        </li>
+      </ol>
+
+      <p>
+        Most importantly, <strong>be patient!</strong>
+      </p>
+
+      <h3>Notifications?</h3>
+
+      <p>
+        Notifications are an optional way to be alerted when the fish are biting.  They are not required and can be enabled/disabled on your choice.
+      </p>
+
+      <h2>Source</h2>
+
+      <p>
+        The source code is available by directly saving this page or from github: <a href="https://github.com/bstruthers/grid-fishing">https://github.com/bstruthers/grid-fishing</a>.
+      </p>
+
+      <h2>License</h2>
+
+      <p>
+        Code released under the <a href="https://github.com/bstruthers/grid-fishing/blob/main/LICENSE">MIT License</a>.
+      </p>
+    </section>
+  </main>
+  <footer>
+    <div>
+      by <a href="https://bstruthers.com">Ben Struthers</a>.
+    </div>
+
+    <span class="fish fish-one">🐟</span>
+    <span class="fish fish-two">🐟</span>
+    <span class="fish fish-three">🐟</span>
+  </footer>
+
+  <script type="text/javascript">
+    const openMenu = document.getElementById('open-menu');
+    const navigation = document.getElementById('navigation');
+    const closeMenu = document.getElementById('close-menu');
+    const navList = document.getElementById('nav-list');
+    const play = document.getElementById('play');
+    const about = document.getElementById('about');
+    const notify = document.getElementById('notify');
+    const cast = document.getElementById('cast');
+    const width = document.getElementById('width');
+    const height = document.getElementById('height');
+
+    const closeMenuFunction = () => {
+      openMenu.setAttribute('aria-expanded', false);
+
+      navigation.classList.add('collapsed');
+      navigation.classList.add('hidden');
+      document.body.classList.remove('menu-opened');
+
+      window.setTimeout(() => openMenu.focus());
+    }
+
+    openMenu.addEventListener('click', () => {
+      openMenu.setAttribute('aria-expanded', true);
+
+      navigation.classList.remove('collapsed');
+      navigation.classList.remove('hidden');
+      document.body.classList.add('menu-opened');
+
+      window.setTimeout(() => closeMenu.focus(), 100);
+    });
+
+    closeMenu.addEventListener('click', closeMenuFunction);
+
+    document.addEventListener('keyup', function (e) {
+      if (e.key === 'Escape') {
+        closeMenuFunction();
+      }
+    });
+
+    navList.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        const showPlay = a.getAttribute('href') === '#play';
+        if (showPlay) {
+          play.classList.remove('none');
+          about.classList.add('none');
+        } else {
+          play.classList.add('none');
+          about.classList.remove('none');
+        }
+        closeMenuFunction();
+      });
+    });
+
+    if (!("Notification in window") || Notification.permission === "denied") {
+      notify.disabled = true;
+    } else {
+      notify.addEventListener('change', () => {
+        if (notify.checked && Notification.permission !== "granted") {
+          Notification.requestPermission().then((permission) => {
+            if (permission === "denied") {
+              notify.checked = false;
+              notify.disabled = true;
+            }
+          });
+        }
+      });
+    }
+
+    cast.addEventListener('click', (e) => {
+      e.preventDefault();
+
+      const removeAlert = document.getElementById('alert');
+      if (removeAlert) {
+        play.removeChild(removeAlert);
+      }
+
+      const gridWidth = parseInt(width.value, 10);
+      const gridHeight = parseInt(height.value, 10);
+
+      if (isNaN(gridWidth) || isNaN(gridHeight)) return;
+
+      width.value = gridWidth;
+      height.value = gridHeight;
+
+      width.disabled = true;
+      notify.disabled = true;
+      height.disabled = true;
+      cast.disabled = true;
+
+      document.title = 'Line Cast - ' + document.title;
+
+      const time = Math.floor(Math.random() * 1000 * 60 * 60);
+      window.setTimeout(() => {
+        const biteX = Math.floor(Math.random() * gridWidth);
+        const biteY = Math.floor(Math.random() * gridHeight);
+        
+        const coordinates = (biteX + 1).toString() + ',' + (biteY + 1).toString();
+        const message = 'The fish are biting at (' + coordinates + ')!';
+
+        const newAlert = document.createElement("p");
+        newAlert.setAttribute('id', 'alert');
+        newAlert.setAttribute('role', 'alert');
+        newAlert.appendChild(document.createTextNode(message));
+        play.appendChild(newAlert);
+
+        document.title = document.title.replace('Line Cast - ', '');
+        width.disabled = false;
+        notify.disabled = false;
+        height.disabled = false;
+        cast.disabled = false;
+
+        const notification = new Notification('Fish are biting!', {
+          body: message
+        });
+      }, time);
+    });
+
+  </script>
+</body>
+
+</html>
