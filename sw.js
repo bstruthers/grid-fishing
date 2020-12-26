@@ -14,7 +14,8 @@ const contentToCache = [
   '/icons/fish-180x180.png',
   '/icons/fish-192x192.png',
   '/icons/fish-384x384.png',
-  '/icons/fish-512x512.png'
+  '/icons/fish-512x512.png',
+  '/manifest.webmanifest'
 ];
 
 self.addEventListener('install', (e) => {
