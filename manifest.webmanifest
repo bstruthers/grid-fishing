@@ -1,0 +1,67 @@
+{
+    "dir": "ltr",
+    "lang": "en",
+    "name": "Grid Fishin'",
+    "short_name": "Grid Fishin'",
+    "scope": "/",
+    "display": "standalone",
+    "start_url": "https://grid.fishing/",
+    "background_color": "#000000",
+    "theme_color": "#b2dbeb",
+    "description": "Grid Fishing is an implementation of the Dilbert \"Carpet Fishing\" game",
+    "orientation": "any",
+    "related_applications": [],
+    "prefer_related_applications": false,
+    "icons": [
+    {
+        "src": "icons/fish-72x72.png",
+        "sizes": "72x72",
+        "type": "image/png",
+        "purpose": "maskable any"
+    },
+    {
+        "src": "icons/fish-96x96.png",
+        "sizes": "96x96",
+        "type": "image/png",
+        "purpose": "maskable any"
+    },
+    {
+        "src": "icons/fish-128x128.png",
+        "sizes": "128x128",
+        "type": "image/png",
+        "purpose": "maskable any"
+    },
+    {
+        "src": "icons/fish-144x144.png",
+        "sizes": "144x144",
+        "type": "image/png",
+        "purpose": "maskable any"
+    },
+    {
+        "src": "icons/fish-152x152.png",
+        "sizes": "152x152",
+        "type": "image/png",
+        "purpose": "maskable any"
+    },
+    {
+        "src": "icons/fish-192x192.png",
+        "sizes": "192x192",
+        "type": "image/png",
+        "purpose": "maskable any"
+    },
+    {
+        "src": "icons/fish-384x384.png",
+        "sizes": "384x384",
+        "type": "image/png",
+        "purpose": "maskable any"
+    },
+    {
+        "src": "icons/fish-512x512.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "maskable any"
+    }
+    ],
+    "url": "https://grid.fishing",
+    "screenshots": []
+}
