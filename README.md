@@ -22,3 +22,5 @@ None.  Download the `index.html` and open in your browser of choice.  No framewo
 ## License
 
 Code released under the [MIT License](https://github.com/bstruthers/grid-fishing/blob/main/LICENSE).
+
+The icon uses the "fishing pole" [OpenMoji](https://openmoji.org/library/#search=fishing&emoji=1F3A3) and is licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/).
