@@ -335,6 +335,10 @@
   </footer>
 
   <script type="text/javascript">
+  if('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js');
+  };
+
     const openMenu = document.getElementById('open-menu');
     const navigation = document.getElementById('navigation');
     const closeMenu = document.getElementById('close-menu');
