@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="no-js">
 
 <head>
   <meta charset="utf-8">
@@ -28,6 +28,7 @@
     }
     .hidden { visibility: hidden; }
     .none { display: none; }
+    .no-js .none { display: block; }
 
     *, ::before, ::after { box-sizing: border-box; }
     :focus { outline: 2px solid #5babda; }
@@ -225,6 +226,8 @@
       }
     }
   </style>
+
+  <script>document.documentElement.className = ''</script>
 </head>
 
 <body>
@@ -250,7 +253,7 @@
       <p>Grid <abbr title="Fishing">Fishin'</abbr> requires the use of JavaScript in order to cast a line.  There is also a service worker registered so the game can be played offline.</p>
     </noscript>
 
-    <section id="about">
+    <section id="about" class="none">
       <h1>About Grid <abbr title="Fishing">Fishin'</abbr></h1>
 
       <p>
@@ -342,8 +345,6 @@
     const cast = document.getElementById('cast');
     const width = document.getElementById('width');
     const height = document.getElementById('height');
-
-    about.classList.add('none');
 
     const closeMenuFunction = () => {
       openMenu.setAttribute('aria-expanded', false);
