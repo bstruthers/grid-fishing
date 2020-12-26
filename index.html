@@ -457,9 +457,10 @@
         height.disabled = false;
         cast.disabled = false;
 
-        const notification = new Notification('Fish are biting!', {
+        navigator.serviceWorker.ready.then((registration) => {
+          registration.showNotification('Fish are biting!', {
           body: message
-        });
+        })});
       }, time);
     });
   </script>
