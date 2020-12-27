@@ -261,7 +261,7 @@
 
   <main>
     <noscript>
-      <p>Grid <abbr title="Fishing">Fishin'</abbr> requires the use of JavaScript in order to cast a line.  There is also a service worker registered so the game can be played offline.</p>
+      <p>Grid <abbr title="Fishing">Fishin'</abbr> requires the use of JavaScript in order to cast a line.  There is also a service worker registered for notifications and offline access.</p>
     </noscript>
 
     <section id="about" class="none">
@@ -369,7 +369,67 @@
       document.body.classList.remove('menu-opened');
 
       window.setTimeout(() => openMenu.focus());
-    }
+    };
+
+    const castFunction = () => {
+      const removeAlert = document.getElementById('alert');
+      if (removeAlert) {
+        play.removeChild(removeAlert);
+      }
+
+      const gridWidth = parseInt(width.value, 10);
+      const gridHeight = parseInt(height.value, 10);
+
+      if (isNaN(gridWidth) || isNaN(gridHeight)) return;
+
+      width.value = gridWidth;
+      height.value = gridHeight;
+
+      const notifyDisabled = notify.disabled;
+
+      width.disabled = true;
+      notify.disabled = true;
+      height.disabled = true;
+      cast.disabled = true;
+
+      document.title = 'Line Cast - ' + document.title;
+
+      localStorage.setItem('inputs', JSON.stringify({
+        width: gridWidth,
+        height: gridHeight,
+        checked: notify.checked 
+      }));
+
+      const time = Math.floor(Math.random() * 1000 * 60 * 60);
+      window.setTimeout(() => {
+        const biteX = Math.floor(Math.random() * gridWidth);
+        const biteY = Math.floor(Math.random() * gridHeight);
+        
+        const coordinates = (biteX + 1).toString() + ',' + (biteY + 1).toString();
+        const message = 'The fish are biting at (' + coordinates + ')!';
+
+        const newAlert = document.createElement("p");
+        newAlert.setAttribute('id', 'alert');
+        newAlert.setAttribute('role', 'alert');
+        newAlert.appendChild(document.createTextNode(message));
+        play.appendChild(newAlert);
+
+        document.title = document.title.replace('Line Cast - ', '');
+        width.disabled = false;
+        notify.disabled = notifyDisabled;
+        height.disabled = false;
+        cast.disabled = false;
+
+        navigator.serviceWorker.ready.then((registration) => {
+          registration.showNotification('Fish are biting!', {
+          body: message,
+          icon: 'icons/fish-192x192.png',
+          actions: [
+            { action: 'cast', title: 'Cast Again' }
+          ]
+        })});
+      }, time);
+    };
 
     const json = localStorage.getItem('inputs');
     if (json) {
@@ -434,59 +494,11 @@
     cast.addEventListener('click', (e) => {
       e.preventDefault();
 
-      const removeAlert = document.getElementById('alert');
-      if (removeAlert) {
-        play.removeChild(removeAlert);
-      }
-
-      const gridWidth = parseInt(width.value, 10);
-      const gridHeight = parseInt(height.value, 10);
-
-      if (isNaN(gridWidth) || isNaN(gridHeight)) return;
-
-      width.value = gridWidth;
-      height.value = gridHeight;
-
-      const notifyDisabled = notify.disabled;
-
-      width.disabled = true;
-      notify.disabled = true;
-      height.disabled = true;
-      cast.disabled = true;
-
-      document.title = 'Line Cast - ' + document.title;
-
-      localStorage.setItem('inputs', JSON.stringify({
-        width: gridWidth,
-        height: gridHeight,
-        checked: notify.checked 
-      }));
-
-      const time = Math.floor(Math.random() * 1000 * 60 * 60);
-      window.setTimeout(() => {
-        const biteX = Math.floor(Math.random() * gridWidth);
-        const biteY = Math.floor(Math.random() * gridHeight);
-        
-        const coordinates = (biteX + 1).toString() + ',' + (biteY + 1).toString();
-        const message = 'The fish are biting at (' + coordinates + ')!';
-
-        const newAlert = document.createElement("p");
-        newAlert.setAttribute('id', 'alert');
-        newAlert.setAttribute('role', 'alert');
-        newAlert.appendChild(document.createTextNode(message));
-        play.appendChild(newAlert);
-
-        document.title = document.title.replace('Line Cast - ', '');
-        width.disabled = false;
-        notify.disabled = notifyDisabled;
-        height.disabled = false;
-        cast.disabled = false;
-
-        navigator.serviceWorker.ready.then((registration) => {
-          registration.showNotification('Fish are biting!', {
-          body: message
-        })});
-      }, time);
+      castFunction();
+    });
+  
+    navigator.serviceWorker.addEventListener('message', () => {
+      castFunction();
     });
   </script>
 </body>

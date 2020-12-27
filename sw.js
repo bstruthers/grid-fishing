@@ -1,4 +1,4 @@
-const cacheName = 'grid-fishing-v1';
+const cacheName = 'grid-fishing-v2';
 const contentToCache = [
   '/',
   '/index.html',
@@ -32,4 +32,30 @@ self.addEventListener('fetch', (e) => {
         return response;
       });
   })}));
+});
+
+self.addEventListener('activate', e => {
+  e.waitUntil(clients.claim());
+});
+
+self.addEventListener('notificationclick', (e) => {
+  e.notification.close();
+
+  e.waitUntil(async function() {
+    const allClients = await clients.matchAll({
+      includeUncontrolled: true
+    });
+
+    for (const client of allClients) {
+      if (e.action === 'cast') {
+        client.postMessage('cast');
+      } else {
+        client.focus();
+      }
+
+      return;
+    }
+
+    return clients.openWindow('/');
+  }());
 });
