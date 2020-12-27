@@ -349,7 +349,7 @@
   <script type="text/javascript">
     if('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js');
-    };
+    }
 
     const openMenu = document.getElementById('open-menu');
     const navigation = document.getElementById('navigation');
@@ -365,7 +365,7 @@
     let notificationsAreDisabled = false;
 
     // Navigation
-    const closeMenuFunction = () => {
+    const closeTheMenu = () => {
       openMenu.setAttribute('aria-expanded', false);
 
       navigation.classList.add('collapsed');
@@ -385,11 +385,11 @@
       window.setTimeout(() => closeMenu.focus(), 100);
     });
 
-    closeMenu.addEventListener('click', closeMenuFunction);
+    closeMenu.addEventListener('click', closeTheMenu);
 
     document.addEventListener('keyup', function (e) {
       if (e.key === 'Escape') {
-        closeMenuFunction();
+        closeTheMenu();
       }
     });
 
@@ -405,7 +405,8 @@
           play.classList.add('none');
           about.classList.remove('none');
         }
-        closeMenuFunction();
+
+        closeTheMenu();
       });
     });
 
@@ -442,7 +443,7 @@
     let biteTime;
     let bobber;
 
-    const castFunction = () => {
+    const castTheLine = () => {
       const shownAlert = document.getElementById('alert');
       if (shownAlert) {
         play.removeChild(shownAlert);
@@ -489,14 +490,14 @@
     const bob = () => {
       const now = Math.floor(Date.now() / 1000);
       if (now >= biteTime) {
-        biteFunction(notify.checked  && !('showTrigger' in Notification.prototype));
+        bite(notify.checked && !('showTrigger' in Notification.prototype));
       } else {
         if (bobber) window.clearTimeout(bobber);
         bobber = window.setTimeout(bob, 1000);
       }
     };
 
-    const biteFunction = (show) => {
+    const bite = (show) => {
       const newAlert = document.createElement("p");
       newAlert.setAttribute('id', 'alert');
       newAlert.setAttribute('role', 'alert');
@@ -534,16 +535,12 @@
 
     cast.addEventListener('click', (e) => {
       e.preventDefault();
-      castFunction();
+      castTheLine();
     });
   
-    navigator.serviceWorker.addEventListener('message', () => {
-      castFunction();
-    });
+    navigator.serviceWorker.addEventListener('message', castTheLine);
 
-    document.addEventListener('resume', (event) => {
-      bob();
-    });
+    document.addEventListener('resume', bob);
   </script>
 </body>
 </html>
