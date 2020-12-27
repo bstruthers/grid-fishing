@@ -6,7 +6,7 @@
     "scope": "/",
     "display": "standalone",
     "start_url": "https://grid.fishing/",
-    "background_color": "#000000",
+    "background_color": "#efefef",
     "theme_color": "#b2dbeb",
     "description": "Grid Fishing is an implementation of the Dilbert \"Carpet Fishing\" game",
     "orientation": "any",
