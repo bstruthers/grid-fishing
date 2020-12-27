@@ -24,6 +24,7 @@
   <meta property="twitter:description" content='Grid Fishing is an implementation of the Dilbert "Carpet Fishing" game'>
   <meta property="twitter:site" content="@bstruthers">
   <meta property="twitter:image" content="https://grid.fishing/icons/fish-512x512.png">
+  <meta http-equiv="origin-trial" content="AoE2VDREiNKRncRjuK4pfeYK2r5nXB4mdhe5w5MtRNEwcvNG2n9p580LkU1X3geRQOynZFIyWHudLkwwjIPz9wEAAABaeyJvcmlnaW4iOiJodHRwczovL2dyaWQuZmlzaGluZzo0NDMiLCJmZWF0dXJlIjoiTm90aWZpY2F0aW9uVHJpZ2dlcnMiLCJleHBpcnkiOjE2MTI3MzEwNzN9">
   <style>
     .sr-only {
       border: 0 !important;
@@ -361,6 +362,9 @@
     const width = document.getElementById('width');
     const height = document.getElementById('height');
 
+    let notificationsAreDisabled = false;
+
+    // Navigation
     const closeMenuFunction = () => {
       openMenu.setAttribute('aria-expanded', false);
 
@@ -370,74 +374,6 @@
 
       window.setTimeout(() => openMenu.focus());
     };
-
-    const castFunction = () => {
-      const removeAlert = document.getElementById('alert');
-      if (removeAlert) {
-        play.removeChild(removeAlert);
-      }
-
-      const gridWidth = parseInt(width.value, 10);
-      const gridHeight = parseInt(height.value, 10);
-
-      if (isNaN(gridWidth) || isNaN(gridHeight)) return;
-
-      width.value = gridWidth;
-      height.value = gridHeight;
-
-      const notifyDisabled = notify.disabled;
-
-      width.disabled = true;
-      notify.disabled = true;
-      height.disabled = true;
-      cast.disabled = true;
-
-      document.title = 'Line Cast - ' + document.title;
-
-      localStorage.setItem('inputs', JSON.stringify({
-        width: gridWidth,
-        height: gridHeight,
-        checked: notify.checked 
-      }));
-
-      const time = Math.floor(Math.random() * 1000 * 60 * 60);
-      window.setTimeout(() => {
-        const biteX = Math.floor(Math.random() * gridWidth);
-        const biteY = Math.floor(Math.random() * gridHeight);
-        
-        const coordinates = (biteX + 1).toString() + ',' + (biteY + 1).toString();
-        const message = 'The fish are biting at (' + coordinates + ')!';
-
-        const newAlert = document.createElement("p");
-        newAlert.setAttribute('id', 'alert');
-        newAlert.setAttribute('role', 'alert');
-        newAlert.appendChild(document.createTextNode(message));
-        play.appendChild(newAlert);
-
-        document.title = document.title.replace('Line Cast - ', '');
-        width.disabled = false;
-        notify.disabled = notifyDisabled;
-        height.disabled = false;
-        cast.disabled = false;
-
-        navigator.serviceWorker.ready.then((registration) => {
-          registration.showNotification('Fish are biting!', {
-          body: message,
-          icon: 'icons/fish-192x192.png',
-          actions: [
-            { action: 'cast', title: 'Cast Again' }
-          ]
-        })});
-      }, time);
-    };
-
-    const json = localStorage.getItem('inputs');
-    if (json) {
-      const inputValues = JSON.parse(json);
-      width.value = inputValues.width;
-      height.value = inputValues.height;
-      notify.checked = inputValues.checked;
-    }
 
     openMenu.addEventListener('click', () => {
       openMenu.setAttribute('aria-expanded', true);
@@ -473,7 +409,20 @@
       });
     });
 
-    if (!("Notification in window") || Notification.permission === "denied") {
+    // Inputs
+    const json = localStorage.getItem('inputs');
+    if (json) {
+      const inputValues = JSON.parse(json);
+      width.value = inputValues.width;
+      height.value = inputValues.height;
+      notify.checked = inputValues.checked;
+    }
+
+    width.addEventListener('focus', () => { width.select(); });
+    height.addEventListener('focus', () => { height.select(); });
+
+    if (Notification.permission === "denied") {
+      notificationsAreDisabled = true;
       notify.disabled = true;
     } else {
       notify.addEventListener('change', () => {
@@ -488,19 +437,113 @@
       });
     }
 
-    width.addEventListener('focus', () => { width.select(); });
-    height.addEventListener('focus', () => { height.select(); });
+    // Fishin'
+    let message;
+    let biteTime;
+    let bobber;
+
+    const castFunction = () => {
+      const shownAlert = document.getElementById('alert');
+      if (shownAlert) {
+        play.removeChild(shownAlert);
+      }
+
+      const gridWidth = parseInt(width.value, 10);
+      const gridHeight = parseInt(height.value, 10);
+
+      if (isNaN(gridWidth) || isNaN(gridHeight)) return;
+
+      width.value = gridWidth;
+      height.value = gridHeight;
+
+      width.disabled = true;
+      notify.disabled = true;
+      height.disabled = true;
+      cast.disabled = true;
+
+      document.title = 'Line Cast - ' + document.title;
+
+      localStorage.setItem('inputs', JSON.stringify({
+        width: gridWidth,
+        height: gridHeight,
+        checked: notificationsAreDisabled ? false : notify.checked 
+      }));
+
+      const biteX = Math.floor(Math.random() * gridWidth);
+      const biteY = Math.floor(Math.random() * gridHeight);
+      
+      const coordinates = (biteX + 1).toString() + ',' + (biteY + 1).toString();
+      message = 'The fish are biting at (' + coordinates + ')!';
+
+      const seconds = Math.floor(Math.random() * 60 * 60);
+      biteTime = Math.floor(Date.now() / 1000) + seconds;
+
+      // If supported, schedule the notication
+      if (notify.checked && 'showTrigger' in Notification.prototype) {
+        showNotification(seconds);
+      }
+
+      bob();
+    };
+
+    const bob = () => {
+      const now = Math.floor(Date.now() / 1000);
+      if (now >= biteTime) {
+        biteFunction(notify.checked  && !('showTrigger' in Notification.prototype));
+      } else {
+        if (bobber) window.clearTimeout(bobber);
+        bobber = window.setTimeout(bob, 1000);
+      }
+    };
+
+    const biteFunction = (show) => {
+      const newAlert = document.createElement("p");
+      newAlert.setAttribute('id', 'alert');
+      newAlert.setAttribute('role', 'alert');
+      newAlert.appendChild(document.createTextNode(message));
+      play.appendChild(newAlert);
+
+      document.title = document.title.replace('Line Cast - ', '');
+      width.disabled = false;
+      notify.disabled = notificationsAreDisabled;
+      height.disabled = false;
+      cast.disabled = false;
+
+      if (show) {
+        showNotification();
+      }
+    };
+
+    const showNotification = (seconds) => {
+      const options = {
+        body: message,
+        icon: 'icons/fish-192x192.png',
+        actions: [
+          { action: 'cast', title: 'Cast Again' }
+        ]
+      };
+
+      if (seconds) {
+        options.showTrigger = new TimestampTrigger(new Date().getTime() + seconds * 1000);
+      }
+
+      navigator.serviceWorker.ready.then((registration) => {
+        registration.showNotification('Fish are biting!', options);
+      });
+    }
 
     cast.addEventListener('click', (e) => {
       e.preventDefault();
-
       castFunction();
     });
   
     navigator.serviceWorker.addEventListener('message', () => {
       castFunction();
     });
+
+    document.addEventListener('resume', (event) => {
+      bob();
+    });
   </script>
 </body>
-
 </html>
