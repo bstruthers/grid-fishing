@@ -346,9 +346,9 @@
   </footer>
 
   <script type="text/javascript">
-  if('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js');
-  };
+    if('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    };
 
     const openMenu = document.getElementById('open-menu');
     const navigation = document.getElementById('navigation');
@@ -369,6 +369,14 @@
       document.body.classList.remove('menu-opened');
 
       window.setTimeout(() => openMenu.focus());
+    }
+
+    const json = localStorage.getItem('inputs');
+    if (json) {
+      const inputValues = JSON.parse(json);
+      width.value = inputValues.width;
+      height.value = inputValues.height;
+      notify.checked = inputValues.checked;
     }
 
     openMenu.addEventListener('click', () => {
@@ -447,6 +455,12 @@
       cast.disabled = true;
 
       document.title = 'Line Cast - ' + document.title;
+
+      localStorage.setItem('inputs', JSON.stringify({
+        width: gridWidth,
+        height: gridHeight,
+        checked: notify.checked 
+      }));
 
       const time = Math.floor(Math.random() * 1000 * 60 * 60);
       window.setTimeout(() => {
