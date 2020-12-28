@@ -445,9 +445,7 @@
 
     const castTheLine = () => {
       const shownAlert = document.getElementById('alert');
-      if (shownAlert) {
-        play.removeChild(shownAlert);
-      }
+      if (shownAlert) play.removeChild(shownAlert);
 
       const gridWidth = parseInt(width.value, 10);
       const gridHeight = parseInt(height.value, 10);
@@ -498,6 +496,9 @@
     };
 
     const bite = (show) => {
+      const shownAlert = document.getElementById('alert');
+      if (shownAlert) play.removeChild(shownAlert);
+
       const newAlert = document.createElement("p");
       newAlert.setAttribute('id', 'alert');
       newAlert.setAttribute('role', 'alert');

@@ -43,19 +43,22 @@ self.addEventListener('notificationclick', (e) => {
 
   e.waitUntil(async function() {
     const allClients = await clients.matchAll({
-      includeUncontrolled: true
+      includeUncontrolled: true,
+      type: 'all'
     });
 
-    for (const client of allClients) {
-      if (e.action === 'cast') {
-        client.postMessage('cast');
-      } else {
-        client.focus();
+    let len = allClients.length;
+    if (len) {
+      while (len--) {
+        const client = allClients[len];
+        if (e.action === 'cast') {
+          client.postMessage('cast');
+        } else {
+          client.focus();
+        }
       }
-
-      return;
+    } else {
+      return clients.openWindow('/');
     }
-
-    return clients.openWindow('/');
   }());
 });
