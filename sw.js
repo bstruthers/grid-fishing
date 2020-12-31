@@ -41,9 +41,9 @@ self.addEventListener('activate', e => {
 		}).map(function (key) {
 			return caches.delete(key);
 		}));
-	})).then(() => {
+	}).then(() => {
     return clients.claim();
-  });
+  }));
 });
 
 self.addEventListener('notificationclick', (e) => {
