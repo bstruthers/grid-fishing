@@ -74,7 +74,7 @@
       align-items: center;
     }
 
-    #open-menu {
+    #openMenu {
       font-size: 2em;
       margin-right: 1rem;
     }
@@ -108,22 +108,22 @@
       transition: width 0.1s ease-in-out;
     }
 
-    #close-menu {
+    #closeMenu {
       font-size: 2rem;
       padding: 0;
       align-self: flex-end;
       width: 3rem;
     }
 
-    #nav-list { list-style: none; }
-    #nav-list>li { margin-bottom: 0.5rem; }
-    #nav-list a {
+    #navList { list-style: none; }
+    #navList>li { margin-bottom: 0.5rem; }
+    #navList a {
       color: #111;
       display: block;
       font-size: 1.6rem;
       text-decoration: none;
     }
-    #nav-list a:hover { text-decoration: underline; }
+    #navList a:hover { text-decoration: underline; }
     
     #navigation.collapsed {
       padding: 0;
@@ -244,17 +244,18 @@
 
 <body>
   <header>
-    <button id="open-menu" type="button" aria-label="Show Navigation Menu" aria-expanded="false" tabindex="0">☰</button>
+    <button id="openMenu" type="button" aria-label="Show Navigation Menu" aria-expanded="false" tabindex="0">☰</button>
 
     <h1><a href="/">Grid <abbr title="Fishing">Fishin'</abbr> 🎣</a></h1>
   </header>
 
-  <nav aria-labelledby="open-menu">
+  <nav aria-labelledby="openMenu">
     <div id="navigation" class="hidden collapsed">
-      <button type="button" id="close-menu" aria-label="Hide Navigation Menu">×</button>
+      <button type="button" id="closeMenu" aria-label="Hide Navigation Menu">×</button>
 
-      <ul id="nav-list">
+      <ul id="navList">
         <li><a href="#play">Play</a></li>
+        <li><a href="#settings">Settings</a></li>
         <li><a href="#about">About</a></li>
       </ul>
     </div>
@@ -335,6 +336,22 @@
         <button type="submit" id="cast">Cast</button>
       </form>
     </section>
+
+    <section id="settings" class="none">
+      <form>
+        <div class="inputs">
+          <div>
+            <label for="maxMinutes">Number of Minutes:</label>
+            <input id="maxMinutes" name="maxMinutes" type="number" step="1" value="60" placeholder="#">
+          </div>
+
+          <div>
+            <input id="zeroBased" name="zeroBased" type="checkbox">
+            <label for="zeroBased">Zero Based Coordinates</label>
+          </div>
+        </div>
+      </form>
+    </section>
   </main>
   <footer>
     <div>
@@ -351,16 +368,19 @@
       navigator.serviceWorker.register('sw.js');
     }
 
-    const openMenu = document.getElementById('open-menu');
+    const openMenu = document.getElementById('openMenu');
     const navigation = document.getElementById('navigation');
-    const closeMenu = document.getElementById('close-menu');
-    const navList = document.getElementById('nav-list');
+    const closeMenu = document.getElementById('closeMenu');
+    const navList = document.getElementById('navList');
     const play = document.getElementById('play');
+    const settings = document.getElementById('settings');
     const about = document.getElementById('about');
     const notify = document.getElementById('notify');
     const cast = document.getElementById('cast');
     const width = document.getElementById('width');
     const height = document.getElementById('height');
+    const maxMinutes = document.getElementById('maxMinutes');
+    const zeroBased = document.getElementById('zeroBased');
 
     let notificationsAreDisabled = false;
 
@@ -398,11 +418,18 @@
         e.preventDefault();
 
         const showPlay = a.getAttribute('href') === '#play';
+        const showSettings = a.getAttribute('href') === '#settings';
         if (showPlay) {
           play.classList.remove('none');
+          settings.classList.add('none');
+          about.classList.add('none');
+        } else if (showSettings) {
+          play.classList.add('none');
+          settings.classList.remove('none');
           about.classList.add('none');
         } else {
           play.classList.add('none');
+          settings.classList.add('none');
           about.classList.remove('none');
         }
 
@@ -417,10 +444,13 @@
       width.value = inputValues.width;
       height.value = inputValues.height;
       notify.checked = inputValues.checked;
+      maxMinutes.value = inputValues.maxMinutes || 60;
+      zeroBased.checked = inputValues.zeroBased;
     }
 
     width.addEventListener('focus', () => { width.select(); });
     height.addEventListener('focus', () => { height.select(); });
+    maxMinutes.addEventListener('focus', () => { maxMinutes.select(); });
 
     if (Notification.permission === "denied") {
       notificationsAreDisabled = true;
@@ -449,32 +479,43 @@
 
       const gridWidth = parseInt(width.value, 10);
       const gridHeight = parseInt(height.value, 10);
+      const minutes = parseInt(maxMinutes.value, 10);
 
       if (isNaN(gridWidth) || isNaN(gridHeight)) return;
 
+      if (isNaN(minutes)) {
+        minutes = 60;
+      }
+
       width.value = gridWidth;
       height.value = gridHeight;
+      maxMinutes.value = minutes;
 
       width.disabled = true;
       notify.disabled = true;
       height.disabled = true;
       cast.disabled = true;
+      maxMinutes.disabled = true;
+      zeroBased.disabled = true;
 
       document.title = 'Line Cast - ' + document.title;
 
       localStorage.setItem('inputs', JSON.stringify({
         width: gridWidth,
         height: gridHeight,
-        checked: notificationsAreDisabled ? false : notify.checked 
+        checked: notificationsAreDisabled ? false : notify.checked, 
+        maxMinutes: minutes,
+        zeroBased: zeroBased.checked,
       }));
 
       const biteX = Math.floor(Math.random() * gridWidth);
       const biteY = Math.floor(Math.random() * gridHeight);
+      const adjustment = zeroBased.checked ? 0 : 1;
       
-      const coordinates = (biteX + 1).toString() + ',' + (biteY + 1).toString();
+      const coordinates = (biteX + adjustment).toString() + ',' + (biteY + adjustment).toString();
       message = 'The fish are biting at (' + coordinates + ')!';
 
-      const seconds = Math.floor(Math.random() * 60 * 60);
+      const seconds = Math.floor(Math.random() * 60 * minutes);
       biteTime = Math.floor(Date.now() / 1000) + seconds;
 
       // If supported, schedule the notication
@@ -510,6 +551,8 @@
       notify.disabled = notificationsAreDisabled;
       height.disabled = false;
       cast.disabled = false;
+      maxMinutes.disabled = false;
+      zeroBased.disabled = false;
 
       if (show) {
         showNotification();
@@ -526,7 +569,9 @@
       };
 
       if (seconds) {
-        options.showTrigger = new TimestampTrigger(new Date().getTime() + seconds * 1000);
+        const notifyOn = Math.floor(Date.now()) + (seconds * 1000)
+        options.timestamp = notifyOn;
+        options.showTrigger = new TimestampTrigger(notifyOn);
       }
 
       navigator.serviceWorker.ready.then((registration) => {
