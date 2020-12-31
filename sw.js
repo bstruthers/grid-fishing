@@ -1,4 +1,4 @@
-const cacheName = 'grid-fishing-v2';
+const cacheName = 'grid-fishing-v3';
 const contentToCache = [
   '/',
   '/index.html',
@@ -35,7 +35,15 @@ self.addEventListener('fetch', (e) => {
 });
 
 self.addEventListener('activate', e => {
-  e.waitUntil(clients.claim());
+  e.waitUntil(caches.keys().then((keys) => {
+		return Promise.all(keys.filter((key) => {
+			return cacheName !== key
+		}).map(function (key) {
+			return caches.delete(key);
+		}));
+	})).then(() => {
+    return clients.claim();
+  });
 });
 
 self.addEventListener('notificationclick', (e) => {
