@@ -1,4 +1,4 @@
-const cacheName = 'grid-fishing-v3';
+const cacheName = 'grid-fishing-v3.1';
 const contentToCache = [
   '/',
   '/index.html',
