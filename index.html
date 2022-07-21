@@ -362,24 +362,26 @@
     <span class="fish fish-three">🐟</span>
   </footer>
 
-  <script type="text/javascript">
+  <script>
     if('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js');
     }
 
-    const openMenu = document.getElementById('openMenu');
-    const navigation = document.getElementById('navigation');
-    const closeMenu = document.getElementById('closeMenu');
-    const navList = document.getElementById('navList');
-    const play = document.getElementById('play');
-    const settings = document.getElementById('settings');
-    const about = document.getElementById('about');
-    const notify = document.getElementById('notify');
-    const cast = document.getElementById('cast');
-    const width = document.getElementById('width');
-    const height = document.getElementById('height');
-    const maxMinutes = document.getElementById('maxMinutes');
-    const zeroBased = document.getElementById('zeroBased');
+    const doc = document;
+
+    const openMenu = doc.getElementById('openMenu');
+    const navigation = doc.getElementById('navigation');
+    const closeMenu = doc.getElementById('closeMenu');
+    const navList = doc.getElementById('navList');
+    const play = doc.getElementById('play');
+    const settings = doc.getElementById('settings');
+    const about = doc.getElementById('about');
+    const notify = doc.getElementById('notify');
+    const cast = doc.getElementById('cast');
+    const width = doc.getElementById('width');
+    const height = doc.getElementById('height');
+    const maxMinutes = doc.getElementById('maxMinutes');
+    const zeroBased = doc.getElementById('zeroBased');
 
     let notificationsAreDisabled = false;
 
@@ -389,7 +391,7 @@
 
       navigation.classList.add('collapsed');
       navigation.classList.add('hidden');
-      document.body.classList.remove('menu-opened');
+      doc.body.classList.remove('menu-opened');
 
       window.setTimeout(() => openMenu.focus());
     };
@@ -399,14 +401,14 @@
 
       navigation.classList.remove('collapsed');
       navigation.classList.remove('hidden');
-      document.body.classList.add('menu-opened');
+      doc.body.classList.add('menu-opened');
 
       window.setTimeout(() => closeMenu.focus(), 100);
     });
 
     closeMenu.addEventListener('click', closeTheMenu);
 
-    document.addEventListener('keyup', function (e) {
+    doc.addEventListener('keyup', function (e) {
       if (e.key === 'Escape') {
         closeTheMenu();
       }
@@ -473,7 +475,7 @@
     let bobber;
 
     const castTheLine = () => {
-      const shownAlert = document.getElementById('alert');
+      const shownAlert = doc.getElementById('alert');
       if (shownAlert) play.removeChild(shownAlert);
 
       const gridWidth = parseInt(width.value, 10);
@@ -494,10 +496,11 @@
       notify.disabled = true;
       height.disabled = true;
       cast.disabled = true;
+      cast.innerText = 'Line Cast!';
       maxMinutes.disabled = true;
       zeroBased.disabled = true;
 
-      document.title = 'Line Cast - ' + document.title;
+      doc.title = 'Line Cast - ' + doc.title;
 
       localStorage.setItem('inputs', JSON.stringify({
         width: gridWidth,
@@ -536,20 +539,21 @@
     };
 
     const bite = (show) => {
-      const shownAlert = document.getElementById('alert');
+      const shownAlert = doc.getElementById('alert');
       if (shownAlert) play.removeChild(shownAlert);
 
-      const newAlert = document.createElement("p");
+      const newAlert = doc.createElement("p");
       newAlert.setAttribute('id', 'alert');
       newAlert.setAttribute('role', 'alert');
-      newAlert.appendChild(document.createTextNode(message));
+      newAlert.appendChild(doc.createTextNode(message));
       play.appendChild(newAlert);
 
-      document.title = document.title.replace('Line Cast - ', '');
+      doc.title = doc.title.replace('Line Cast - ', '');
       width.disabled = false;
       notify.disabled = notificationsAreDisabled;
       height.disabled = false;
       cast.disabled = false;
+      cast.innerText = 'Cast';
       maxMinutes.disabled = false;
       zeroBased.disabled = false;
 
@@ -585,7 +589,7 @@
   
     navigator.serviceWorker.addEventListener('message', castTheLine);
 
-    document.addEventListener('resume', bob);
+    doc.addEventListener('resume', bob);
   </script>
 </body>
 </html>
